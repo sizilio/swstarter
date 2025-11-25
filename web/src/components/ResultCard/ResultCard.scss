@@ -1,0 +1,58 @@
+@import '../../styles/variables';
+
+.result-card {
+  display: flex;
+  gap: 20px;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 13px;
+  margin-bottom: 13px;
+  position: relative;
+
+  &:after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 1px;
+    background-color: $gray-color-1;
+  }
+
+  h3 {
+    font-size: 18px;
+  }
+
+  a {
+    color: $white-color;
+    font-size: 16px;
+    font-weight: 600;
+    text-decoration: none;
+    text-transform: uppercase;
+    padding: 8px 25px;
+    border: .5px solid $green-color;
+    border-radius: 20px;
+    background-color: $green-color;
+    outline: none;
+    cursor: pointer;
+    transition: all .3s ease-in-out;
+
+    &:hover, &:active, &:focus {
+      background-color: $green-color-1;
+      border-color: $green-color-1;
+    }
+  }
+
+  @media (max-width: 768px) {
+    gap: 10px;
+    flex-direction: column;
+    align-items: flex-start;
+    padding-bottom: 20px;
+    margin-bottom: 20px;
+
+    a {
+      width: 100%;
+      text-align: center;
+    }
+  }
+}

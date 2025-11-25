@@ -1,0 +1,123 @@
+@import '../../styles/variables';
+
+.movie-detail-page {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  min-height: calc(100vh - 64px - 60px);
+  padding: 30px;
+  border: .5px solid $gray-color-2;
+  border-radius: 4px;
+  background-color: $white-color;
+  box-shadow: 0 0.5px 1px 0 #848484bf;
+  box-sizing: border-box;
+
+  h1 {
+    font-size: 20px;
+    padding-bottom: 13px;
+    margin-bottom: 13px;
+  }
+
+  .movie-details {
+    display: flex;
+    gap: 50px;
+
+    div {
+      width: 100%;
+      margin-bottom: 30px;
+
+      h2 {
+        font-size: 18px;
+        padding-bottom: 13px;
+        margin-bottom: 13px;
+        position: relative;
+
+        &:after {
+          content: "";
+          position: absolute;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          height: 1px;
+          background-color: $gray-color-1;
+        }
+      }
+
+      p {
+        font-size: 16px;
+        font-weight: 500;
+        margin-bottom: 5px;
+      }
+    }
+  }
+
+  .back-link {
+    display: block;
+    margin-top: auto;
+
+    a {
+      display: inline-block;
+      color: $white-color;
+      font-size: 16px;
+      font-weight: 600;
+      text-decoration: none;
+      text-transform: uppercase;
+      padding: 8px 25px;
+      border: .5px solid $green-color;
+      border-radius: 20px;
+      background-color: $green-color;
+      outline: none;
+      cursor: pointer;
+      transition: all .3s ease-in-out;
+  
+      &:hover, &:active, &:focus {
+        background-color: $green-color-1;
+        border-color: $green-color-1;
+      }
+
+      &.back-header {
+        display: none;
+      }
+    }
+  }
+
+  @media (max-width: 768px) {
+    border: 0;
+    min-height: calc(100vh - 64px);
+    box-shadow: none;
+
+    .movie-details {
+      gap: 20px;
+      flex-direction: column;
+
+      div {
+        &:first-child {
+          margin-bottom: 0;
+        }
+      }
+    }
+
+    .back-link {
+      a {
+        width: 100%;
+        text-align: center;
+
+        &.back-header {
+          display: block;
+          position: absolute;
+          top: 25px;
+          background-color: transparent;
+          border-width: 3px;
+          border-radius: 0;
+          font-size: 0;
+          border-top: 0;
+          border-right: 0;
+          width: 15px;
+          height: 15px;
+          transform: rotate(45deg);
+          padding: 0;
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,99 @@
+@import '../../styles/variables';
+
+.results-list {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  min-height: calc(100vh - 64px - 60px);
+  padding: 30px;
+  border: .5px solid $gray-color-2;
+  border-radius: 4px;
+  background-color: $white-color;
+  box-shadow: 0 0.5px 1px 0 #848484bf;
+  box-sizing: border-box;
+
+  h1 {
+    font-size: 20px;
+    padding-bottom: 13px;
+    margin-bottom: 13px;
+    position: relative;
+
+    &:after {
+      content: "";
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      height: 1px;
+      background-color: $gray-color-1;
+    }
+  }
+
+  .empty {
+    width: 100%;
+    margin: auto;
+    text-align: center;
+
+    p {
+      color: $gray-color-1;
+      font-size: 16px;
+      font-weight: 600;
+    }
+  }
+
+  button {
+    display: none;
+  }
+
+  @media (max-width: 768px) {
+    border: 0;
+    box-shadow: none;
+    min-height: calc(100vh - 64px);
+
+    h1 {
+      padding-bottom: 15px;
+      margin-bottom: 15px;
+
+      &:after {
+        height: 2px;
+      }
+    }
+
+    button {
+      display: block;
+      color: $white-color;
+      font-size: 16px;
+      font-weight: 600;
+      text-decoration: none;
+      text-transform: uppercase;
+      padding: 8px 25px;
+      border: .5px solid $green-color;
+      border-radius: 20px;
+      background-color: $green-color;
+      outline: none;
+      cursor: pointer;
+      transition: all .3s ease-in-out;
+      margin-top: auto;
+
+      &:hover, &:active, &:focus {
+        background-color: $green-color-1;
+        border-color: $green-color-1;
+      }
+
+      &.back-header {
+        position: absolute;
+        top: 25px;
+        background-color: transparent;
+        border-width: 3px;
+        border-radius: 0;
+        font-size: 0;
+        border-top: 0;
+        border-right: 0;
+        width: 15px;
+        height: 15px;
+        transform: rotate(45deg);
+        padding: 0;
+      }
+    }
+  }
+}

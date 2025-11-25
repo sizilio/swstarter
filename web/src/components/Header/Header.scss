@@ -1,0 +1,33 @@
+@import '../../styles/variables';
+
+.header {
+  background-color: $white-color;
+  box-shadow: 0 1px 0 0 $gray-color-2;
+
+  .header-container {
+    max-width: $max-width;
+    margin: 0 auto;
+    padding: 15px;
+    box-sizing: border-box;
+  }
+
+  .logo {
+    text-align: center;
+
+    a {
+      color: $green-color;
+      font-size: 28px;
+      font-weight: bold;
+      text-decoration: none;
+    }
+  }
+
+  @media (max-width: 768px) {
+    box-shadow: none;
+    border-bottom: 2px solid $green-color;
+
+    .header-container {
+      padding: 14px;
+    }
+  }
+}
