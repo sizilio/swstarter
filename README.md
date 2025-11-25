@@ -96,9 +96,6 @@ docker-compose down
 ### Statistics
 - `GET /api/statistics` - Get query statistics (updated every 5 minutes)
 
-### Health Check
-- `GET /api/health` - Check API status
-
 ## Project Structure
 
 ```
