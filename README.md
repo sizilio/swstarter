@@ -53,8 +53,8 @@ A full-stack application that searches the Star Wars API (SWAPI) with query stat
 
 1. Clone the repository:
 ```bash
-git clone <repository-url>
-cd starwars
+git clone https://github.com/sizilio/swstarter
+cd swstarter
 ```
 
 2. Set up environment variables (optional - default values are already configured):

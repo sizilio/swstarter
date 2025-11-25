@@ -53,8 +53,8 @@ Uma aplicação full-stack que busca na API Star Wars (SWAPI) com rastreamento d
 
 1. Clone o repositório:
 ```bash
-git clone <repository-url>
-cd starwars
+git clone https://github.com/sizilio/swstarter
+cd swstarter
 ```
 
 2. Configure as variáveis de ambiente (opcional - valores padrão já estão configurados):
