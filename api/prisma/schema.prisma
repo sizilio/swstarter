@@ -1,0 +1,32 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Query {
+  id             Int      @id @default(autoincrement())
+  searchTerm     String   @map("search_term") @db.VarChar(255)
+  searchType     String   @map("search_type") @db.VarChar(50)
+  resultsCount   Int      @default(0) @map("results_count")
+  responseTimeMs Int      @default(0) @map("response_time_ms")
+  createdAt      DateTime @default(now()) @map("created_at")
+
+  @@index([createdAt])
+  @@index([searchTerm])
+  @@map("queries")
+}
+
+model Statistic {
+  id              Int      @id @default(autoincrement())
+  topQueries      Json     @map("top_queries")
+  avgResponseTime Decimal  @map("avg_response_time") @db.Decimal(10, 2)
+  mostPopularHour Int      @map("most_popular_hour")
+  totalQueries    Int      @default(0) @map("total_queries")
+  computedAt      DateTime @default(now()) @map("computed_at")
+
+  @@map("statistics")
+}

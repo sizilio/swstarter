@@ -1,0 +1,21 @@
+{
+  "name": "swstarter",
+  "version": "1.0.0",
+  "description": "Star Wars API Search Application",
+  "private": true,
+  "scripts": {
+    "test": "npm run test:api && npm run test:web",
+    "test:api": "cd api && npm test",
+    "test:api:coverage": "cd api && npm run test:coverage",
+    "test:web": "cd web && npm test",
+    "test:web:coverage": "cd web && npm run test:coverage",
+    "docker:up": "npm run test && docker-compose up --build",
+    "docker:up:detached": "npm run test && docker-compose up --build -d",
+    "docker:down": "docker-compose down -v",
+    "docker:logs": "docker-compose logs -f",
+    "docker:clean": "docker-compose down -v --rmi local"
+  },
+  "keywords": ["starwars", "api", "react", "typescript"],
+  "author": "",
+  "license": "ISC"
+}
