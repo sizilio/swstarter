@@ -1,253 +1,261 @@
 # SWStarter
 
-Uma aplicação full-stack que busca na API Star Wars (SWAPI) com rastreamento de estatísticas de consultas e visualizações detalhadas.
+Uma aplicação full-stack de busca Star Wars construída com TypeScript, com cache Redis, processamento de estatísticas via filas e cobertura abrangente de testes.
 
 ## Stack Tecnológica
 
+**Backend:**
+- TypeScript
+- Node.js 18 + Express 4.18
+- Prisma ORM (PostgreSQL 15)
+- Redis 7 (cache + filas)
+- BullMQ (processamento de jobs)
+- Pino (logging estruturado)
+- Jest + Supertest (testes)
+
 **Frontend:**
-- React 18.2.0
-- React Router DOM 6.20.0
+- TypeScript
+- React 18.2 + React Router 6
 - SCSS/Sass
 - Axios
+- Jest + React Testing Library (testes)
 
-**Backend:**
-- Node.js 18 (Alpine)
-- Express 4.18.2
-- PostgreSQL 15 (Alpine)
-- node-cron 3.0.3 (tarefas agendadas)
-
-**DevOps:**
-- Docker
-- Docker Compose 3.8
+**Infraestrutura:**
+- Docker + Docker Compose
 
 ## Funcionalidades
 
-- **Funcionalidade de Busca**
-  - Buscar personagens de Star Wars por nome
-  - Buscar filmes de Star Wars por título
-  - Resultados de busca em tempo real com rastreamento de tempo de resposta
+- **Busca**
+  - Buscar personagens Star Wars por nome
+  - Buscar filmes Star Wars por título
+  - Resultados cacheados no Redis para respostas rápidas
 
 - **Páginas de Detalhes**
-  - Detalhes individuais de personagens com filmes associados
-  - Detalhes individuais de filmes com lista de elenco
-  - Links clicáveis entre entidades relacionadas
+  - Detalhes de personagem com filmes associados
+  - Detalhes de filme com lista de elenco
+  - Navegação entre entidades relacionadas
 
 - **Painel de Estatísticas**
-  - Top 5 termos mais buscados com porcentagens
+  - Top 5 termos mais buscados
   - Tempo médio de resposta da API
   - Hora mais popular de busca
   - Contagem total de consultas
-  - Auto-computadas a cada 5 minutos via cron job
+  - Processado via BullMQ a cada 5 minutos
 
-- **Recursos de UX**
-  - Design responsivo mobile-first
-  - Estados de carregamento com skeleton
-  - Tratamento de erros
+- **Performance e Confiabilidade**
+  - Cache Redis (1h para pessoas, 24h para filmes)
+  - Rate limiting (100 req/15min, 30 buscas/min)
+  - Tratamento gracioso de falhas da SWAPI
+  - Logging estruturado com Pino
+
+- **Qualidade de Código**
+  - TypeScript modo strict
+  - Padrão Atomic Design (frontend)
+  - Custom React hooks
+  - 90%+ de cobertura de testes
 
 ## Pré-requisitos
 
-- Docker Desktop instalado
-- Docker Compose instalado
+- Docker Desktop
+- Node.js 18+ (para rodar testes localmente)
 
-## Como Executar
+## Início Rápido
 
-1. Clone o repositório:
 ```bash
+# Clone o repositório
 git clone https://github.com/sizilio/swstarter
 cd swstarter
+
+# Rode os testes e inicie todos os containers
+npm run docker:up
+
+# Acesse a aplicação
+# Frontend: http://localhost:8080
+# Backend:  http://localhost:3000
 ```
 
-2. Configure as variáveis de ambiente (opcional - valores padrão já estão configurados):
+## Scripts Disponíveis
+
+Execute a partir da raiz do projeto:
+
 ```bash
-# Copie os arquivos .env.example para .env (já está pronto - arquivos prontos para uso)
-# Tanto api/.env.example quanto web/.env.example contêm configurações padrão
-# Você pode customizá-los se necessário, caso contrário use como estão
+# Testes
+npm test                    # Roda todos os testes (API + Web)
+npm run test:api            # Roda apenas testes do backend
+npm run test:api:coverage   # Testes do backend com cobertura
+npm run test:web            # Roda apenas testes do frontend
+npm run test:web:coverage   # Testes do frontend com cobertura
+
+# Docker
+npm run docker:up           # Roda testes + inicia containers
+npm run docker:up:detached  # Roda testes + inicia em background
+npm run docker:down         # Para containers e remove volumes
+npm run docker:logs         # Mostra logs em tempo real
+npm run docker:clean        # Para, remove volumes e imagens
 ```
-
-3. Build e inicie todos os containers:
-```bash
-docker-compose up --build
-```
-
-4. Aguarde todos os serviços inicializarem (banco de dados, API, frontend)
-
-5. Acesse a aplicação:
-   - **Frontend:** http://localhost:8080
-   - **API Backend:** http://localhost:3000
-   - **Banco de Dados:** localhost:5432
-
-6. Para parar a aplicação:
-```bash
-docker-compose down
-```
-
-**Observação:** Os arquivos `.env.example` nas pastas `api/` e `web/` contêm todas as variáveis de ambiente necessárias com valores padrão. Os containers Docker funcionarão imediatamente sem qualquer configuração adicional.
 
 ## Endpoints da API
 
 ### Busca
-- `GET /api/search/people?name={name}` - Buscar pessoas por nome
-- `GET /api/search/movies?title={title}` - Buscar filmes por título
+- `GET /api/search/people?name={name}` - Buscar personagens
+- `GET /api/search/movies?title={title}` - Buscar filmes
 
 ### Detalhes
-- `GET /api/search/people/:id` - Obter detalhes de pessoa com todos os filmes
-- `GET /api/search/movies/:id` - Obter detalhes de filme com todos os personagens
+- `GET /api/search/people/:id` - Detalhes do personagem com filmes
+- `GET /api/search/movies/:id` - Detalhes do filme com personagens
 
 ### Estatísticas
-- `GET /api/statistics` - Obter estatísticas de consultas (atualizado a cada 5 minutos)
+- `GET /api/statistics` - Estatísticas de consultas (atualizado a cada 5 min)
 
 ## Estrutura do Projeto
 
 ```
-starwars/
-├── api/                          # Backend (Node.js + Express)
+swstarter/
+├── api/                              # Backend
 │   ├── config/
-│   │   └── database.js           # Conexão PostgreSQL
+│   │   └── database.ts               # Configuração Prisma
 │   ├── controllers/
-│   │   ├── searchController.js   # Endpoints de busca e detalhes
-│   │   └── statisticsController.js
-│   ├── database/
-│   │   └── schema.sql            # Schema do banco de dados
+│   │   ├── searchController.ts
+│   │   └── statisticsController.ts
 │   ├── jobs/
-│   │   └── computeStatistics.js  # Job agendado de estatísticas
+│   │   └── computeStatistics.ts      # Worker BullMQ
 │   ├── models/
-│   │   ├── Query.js              # Modelo de Query
-│   │   └── Statistic.js          # Modelo de Estatísticas
+│   │   ├── Query.ts
+│   │   └── Statistic.ts
 │   ├── routes/
-│   │   ├── search.js
-│   │   └── statistics.js
 │   ├── services/
-│   │   ├── swapiService.js       # Integração com SWAPI
-│   │   └── statisticsService.js
-│   ├── .env.example              # Template de variáveis de ambiente
-│   ├── Dockerfile
-│   ├── package.json
-│   └── server.js                 # Ponto de entrada principal
+│   │   ├── swapiService.ts           # SWAPI + cache Redis
+│   │   └── statisticsService.ts
+│   ├── types/
+│   ├── tests/
+│   │   ├── unit/
+│   │   ├── integration/
+│   │   └── mocks/
+│   ├── prisma/
+│   │   └── schema.prisma
+│   ├── server.ts
+│   └── tsconfig.json
 │
-├── web/                          # Frontend (React)
-│   ├── public/
-│   │   └── index.html
+├── web/                              # Frontend
 │   ├── src/
 │   │   ├── components/
-│   │   │   ├── Header/
-│   │   │   ├── Layout/
-│   │   │   ├── ResultCard/
-│   │   │   ├── ResultsList/
-│   │   │   ├── SearchBar/
-│   │   │   ├── SkeletonLoader/
-│   │   │   └── Statistics/
+│   │   │   ├── molecules/            # Componentes simples
+│   │   │   │   ├── ResultCard/
+│   │   │   │   └── SkeletonLoader/
+│   │   │   └── organisms/            # Componentes compostos
+│   │   │       ├── Header/
+│   │   │       ├── Layout/
+│   │   │       ├── SearchBar/
+│   │   │       └── ResultsList/
+│   │   ├── hooks/                    # Custom hooks
+│   │   │   ├── useSearch.ts
+│   │   │   ├── usePersonDetail.ts
+│   │   │   └── useMovieDetail.ts
 │   │   ├── pages/
-│   │   │   ├── SearchPage/
-│   │   │   ├── StatsPage/
-│   │   │   ├── PeopleDetailPage/
-│   │   │   └── MovieDetailPage/
 │   │   ├── services/
-│   │   │   └── api.js            # Cliente API Axios
-│   │   ├── utils/
-│   │   │   └── helpers.js        # Funções auxiliares
-│   │   ├── App.js
-│   │   └── index.js
-│   ├── .env.example              # Template de variáveis de ambiente
-│   ├── Dockerfile
-│   └── package.json
+│   │   ├── types/
+│   │   └── utils/
+│   ├── tests/
+│   │   ├── unit/
+│   │   ├── integration/
+│   │   └── mocks/
+│   └── tsconfig.json
 │
-├── docker-compose.yml            # Orquestração Docker
-├── README.md                     # Versão em inglês
-└── README_PT.md                  # Versão em português
+├── docker-compose.yml
+├── package.json                      # Scripts da raiz
+├── README.md                         # Versão em inglês
+└── README_PT.md
 ```
 
-## Schema do Banco de Dados
+## Arquitetura
 
-**Tabela queries:**
-- id (SERIAL PRIMARY KEY)
-- search_term (VARCHAR)
-- search_type (VARCHAR)
-- results_count (INTEGER)
-- response_time_ms (INTEGER)
-- created_at (TIMESTAMP)
-
-**Tabela statistics:**
-- id (SERIAL PRIMARY KEY)
-- top_queries (JSONB)
-- avg_response_time (NUMERIC)
-- most_popular_hour (INTEGER)
-- total_queries (INTEGER)
-- computed_at (TIMESTAMP)
-
-## Desenvolvimento
-
-A aplicação roda em containers Docker:
-
-- **Frontend:** React Scripts com Webpack HMR
-- **Backend:** Nodemon para reinicialização automática em mudanças
-- **Banco de Dados:** PostgreSQL com volume persistente
-
-### Variáveis de Ambiente
-
-O projeto inclui arquivos `.env.example` com todas as configurações necessárias. O setup Docker funciona com esses valores padrão sem necessitar de mudanças.
-
-**Backend (api/.env.example):**
 ```
+┌─────────────────────────────────────────────────────────────────┐
+│                         Docker Network                          │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                 │
+│  ┌─────────┐    ┌─────────────┐    ┌──────────┐    ┌─────────┐ │
+│  │ React   │───▶│  Express    │───▶│PostgreSQL│    │  Redis  │ │
+│  │ :8080   │    │  API :3000  │    │  :5432   │    │  :6379  │ │
+│  └─────────┘    └──────┬──────┘    └──────────┘    └────┬────┘ │
+│                        │                                │      │
+│                        │         ┌──────────────────────┘      │
+│                        │         │                             │
+│                        ▼         ▼                             │
+│                   ┌─────────────────┐                          │
+│                   │     SWAPI       │                          │
+│                   │  (API externa)  │                          │
+│                   └─────────────────┘                          │
+│                                                                 │
+│  Fluxo de Dados:                                               │
+│  1. React → Express API                                        │
+│  2. API verifica cache Redis                                   │
+│  3. Cache miss → busca na SWAPI → armazena no Redis            │
+│  4. Registra consulta no PostgreSQL                            │
+│  5. BullMQ processa estatísticas a cada 5 min                  │
+│                                                                 │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+## Testes
+
+O projeto possui cobertura abrangente de testes:
+
+| Área | Cobertura |
+|------|-----------|
+| Backend | 100% statements, 93% branches |
+| Frontend | 98% statements, 90% branches |
+
+```bash
+# Rodar todos os testes
+npm test
+
+# Rodar com relatório de cobertura
+npm run test:api:coverage
+npm run test:web:coverage
+```
+
+Os testes rodam automaticamente antes do Docker iniciar (`npm run docker:up`).
+
+## Variáveis de Ambiente
+
+**Backend (api/.env):**
+```env
 NODE_ENV=development
 PORT=3000
-DB_HOST=db
-DB_PORT=5432
-DB_NAME=starwars
-DB_USER=starwars
-DB_PASSWORD=starwars123
+DATABASE_URL=postgresql://starwars:starwars123@db:5432/starwars
+REDIS_URL=redis://redis:6379
 ```
 
-**Frontend (web/.env.example):**
-```
+**Frontend (web/.env):**
+```env
 PORT=8080
 REACT_APP_API_URL=http://localhost:3000
 ```
 
-**Se precisar customizar:** Simplesmente copie os arquivos `.env.example` para `.env` e modifique conforme necessário:
-```bash
-cp api/.env.example api/.env
-cp web/.env.example web/.env
-```
-
-## Observações
-
-- Estatísticas são computadas automaticamente a cada 5 minutos usando node-cron
-- Todas as consultas de busca são registradas no PostgreSQL com tempos de resposta
-- O frontend comunica exclusivamente com a API do backend (não diretamente com SWAPI)
-- Backend busca recursos aninhados em paralelo usando Promise.all()
-- Banco de dados usa connection pooling para melhor performance
-- Volumes Docker garantem persistência de dados entre reinicializações de containers
-
-## Arquitetura
-
-**Arquitetura de 3 Camadas:**
-1. **Frontend (Cliente):** SPA React com roteamento client-side
-2. **Backend (Aplicação):** API RESTful com estrutura inspirada em MVC
-3. **Banco de Dados (Dados):** PostgreSQL para persistência
-
-**Fluxo de Dados:**
-```
-Usuário → React (8080) → Express API (3000) → PostgreSQL (5432) / SWAPI
-```
+Valores padrão já estão pré-configurados nos arquivos `.env.example`.
 
 ## Resolução de Problemas
 
-**Containers não inicializam:**
+**Containers não iniciam:**
 ```bash
-docker-compose down
-docker system prune -a
-docker-compose up --build
+npm run docker:clean
+npm run docker:up
 ```
 
 **Problemas de conexão com banco de dados:**
-- Certifique-se de que a porta 5432 não está em uso
-- Verifique os logs do docker-compose: `docker-compose logs db`
+```bash
+docker-compose logs db
+```
 
-**Frontend não carrega:**
-- Certifique-se de que a porta 8080 não está em uso
-- Verifique o console do navegador para erros
-- Verifique REACT_APP_API_URL em web/.env
+**Problemas de conexão com Redis:**
+```bash
+docker-compose logs redis
+```
+
+**Conflitos de porta:**
+- Certifique-se que as portas 3000, 5432, 6379, 8080 estão disponíveis
 
 ## Licença
 
-Este projeto foi criado como um exercício take-home.
+Este projeto foi criado como uma avaliação técnica.

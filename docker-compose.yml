@@ -13,11 +13,24 @@ services:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
-      - ./api/database/schema.sql:/docker-entrypoint-initdb.d/schema.sql
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U starwars"]
       interval: 5s
       timeout: 5s
+      retries: 5
+
+  # Redis Cache
+  redis:
+    image: redis:7-alpine
+    container_name: starwars-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
       retries: 5
 
   # Backend API
@@ -29,18 +42,18 @@ services:
     environment:
       NODE_ENV: development
       PORT: 3000
-      DB_HOST: db
-      DB_PORT: 5432
-      DB_NAME: starwars
-      DB_USER: starwars
-      DB_PASSWORD: starwars123
+      DATABASE_URL: postgresql://starwars:starwars123@db:5432/starwars?schema=public
+      REDIS_URL: redis://redis:6379
     depends_on:
       db:
+        condition: service_healthy
+      redis:
         condition: service_healthy
     volumes:
       - ./api:/app
       - /app/node_modules
-    command: npm run dev
+      - /app/prisma
+    command: sh -c "npx prisma db push && npm run dev"
 
   # Frontend
   web:
@@ -62,3 +75,4 @@ services:
 
 volumes:
   postgres_data:
+  redis_data:
